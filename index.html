@@ -85,14 +85,15 @@
         .custom-scroll::-webkit-scrollbar-thumb { background: #ffc2d1; border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center relative font-sans text-gray-700">
+<!-- เพิ่ม ontouchstart เพื่อช่วยกระตุ้นเสียงในมือถือ -->
+<body class="min-h-screen flex items-center justify-center relative font-sans text-gray-700" onclick="tryPlayMusic()" ontouchstart="tryPlayMusic()">
 
     <div id="hearts-container" class="fixed inset-0 pointer-events-none z-0"></div>
     
-    <!-- Hidden Player for Background Music (แก้ไข: เปลี่ยนจาก hidden เป็น opacity-0 เพื่อให้มือถือมองเห็น) -->
+    <!-- Hidden Player for Background Music (ใช้ opacity-0 เพื่อให้ทำงานบนมือถือได้) -->
     <div id="youtube-bg-player" class="fixed bottom-0 left-0 w-1 h-1 opacity-0 pointer-events-none z-[-1]"></div>
 
-    <!-- Music Control Toggle (ปุ่มควบคุมเพลง) -->
+    <!-- Music Control Toggle (ปุ่มเปิดปิดเสียง เผื่อกรณีฉุกเฉิน) -->
     <button id="music-toggle" onclick="toggleMusicManually()" class="fixed bottom-4 right-4 z-50 bg-white/80 backdrop-blur p-3 rounded-full shadow-lg border-2 border-pink-200 hidden transition-transform active:scale-95">
         <span id="music-icon" class="text-xl">🔇</span>
     </button>
@@ -111,6 +112,7 @@
 
             <!-- PAGE 1: Login -->
             <div id="page-1" class="section-transition section-active flex-col md:flex-row items-center justify-center w-full h-full gap-8 md:gap-16">
+                <!-- ปรับขนาด Cover ให้พอดี (ไม่ Crop) -->
                 <div class="relative w-48 md:w-80 h-auto rounded-2xl border-4 border-pink-300 p-1 shadow-lg animate-float shrink-0 bg-white">
                     <img id="img-cover" src="" loading="lazy" onerror="this.src='https://via.placeholder.com/300?text=Image+Error'" alt="Cover Photo" class="w-full h-auto object-contain rounded-xl">
                     <div class="absolute -bottom-2 -right-2 bg-pink-500 text-white p-2 md:p-3 rounded-full shadow-md text-sm md:text-xl">🔒</div>
@@ -120,7 +122,9 @@
                     <h1 class="text-xl md:text-3xl font-bold text-pink-500 mb-2 md:mb-4">Welcome My Love</h1>
                     <p class="text-gray-500 text-sm md:text-base mb-4">โปรดใส่รหัสผ่านเพื่อเข้าสู่หัวใจ</p>
                     <div class="w-full space-y-3">
+                        <!-- เพิ่ม onclick เพื่อกระตุ้นเสียงตอนแตะช่อง -->
                         <input type="tel" id="password-input" maxlength="6" placeholder="รหัสผ่าน" 
+                               onclick="tryPlayMusic()"
                                class="w-full px-4 py-3 rounded-xl border-2 border-pink-100 focus:border-pink-400 focus:outline-none text-center text-lg tracking-widest text-pink-500 placeholder-pink-200 transition-colors">
                         <p id="error-msg" class="text-red-400 text-xs text-center hidden">รหัสผิดครับ ลองใหม่อีกทีนะ</p>
                         <button onclick="checkPassword()" class="w-full bg-gradient-to-r from-pink-300 to-pink-500 text-white py-3 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all font-semibold">
@@ -205,7 +209,7 @@
     <script>
         var mainPlayer;
         var bgPlayer;
-        var musicStarted = false;
+        var isMusicPlaying = false; // ตัวแปรเช็คสถานะจริง
 
         // ฟังก์ชันช่วยดึง ID จากลิงก์ Youtube
         function getYoutubeId(url) {
@@ -226,10 +230,10 @@
                 }
             });
 
-            // 2. สร้าง Player สำหรับเพลงพื้นหลัง
+            // 2. สร้าง Player สำหรับเพลงพื้นหลัง (ซ่อนอยู่)
             const bgMusicId = getYoutubeId(CONFIG.page3.backgroundMusicID);
             bgPlayer = new YT.Player('youtube-bg-player', {
-                height: '1', width: '1', // ต้องมีขนาดเล็กน้อย (ห้าม 0) เพื่อให้มือถือยอมเล่น
+                height: '1', width: '1', 
                 videoId: bgMusicId,
                 playerVars: { 
                     'playsinline': 1, 
@@ -246,38 +250,44 @@
         }
 
         function onBgPlayerReady(event) {
-            // แสดงปุ่มควบคุมเพลงเมื่อพร้อม
+            // Unmute รอไว้เลย
+            event.target.unMute(); 
+            event.target.setVolume(100);
             document.getElementById('music-toggle').classList.remove('hidden');
         }
 
         function onBgPlayerStateChange(event) {
             const icon = document.getElementById('music-icon');
             if (event.data == YT.PlayerState.PLAYING) {
-                musicStarted = true;
+                isMusicPlaying = true;
                 icon.innerText = "🎵";
                 icon.classList.add("animate-spin-slow");
             } else {
+                isMusicPlaying = false;
                 icon.innerText = "🔇";
                 icon.classList.remove("animate-spin-slow");
             }
         }
 
-        // ฟังก์ชันพยายามเล่นเพลง
+        // ฟังก์ชันพยายามเล่นเพลง (จะถูกเรียกทุกครั้งที่แตะจอจนกว่าเพลงจะเล่น)
         function tryPlayMusic() {
-            if (bgPlayer && typeof bgPlayer.playVideo === 'function') {
-                bgPlayer.setVolume(100);
+            if (!bgPlayer || typeof bgPlayer.playVideo !== 'function') return;
+            
+            // เช็คว่าถ้าเพลงยังไม่เล่น ให้สั่งเล่น
+            if (bgPlayer.getPlayerState() !== YT.PlayerState.PLAYING && bgPlayer.getPlayerState() !== YT.PlayerState.BUFFERING) {
+                bgPlayer.unMute();
                 bgPlayer.playVideo();
             }
         }
 
-        // ฟังก์ชันปุ่มกดมือ
+        // ฟังก์ชันปุ่มกดมือ (Toggle)
         function toggleMusicManually() {
             if (!bgPlayer) return;
-            
-            // เช็คสถานะ: 1 = Playing, 2 = Paused
-            if (bgPlayer.getPlayerState() === 1) {
+            // สลับสถานะ
+            if (bgPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
                 bgPlayer.pauseVideo();
             } else {
+                bgPlayer.unMute();
                 bgPlayer.playVideo();
             }
         }
@@ -315,8 +325,11 @@
             if (input.value === CONFIG.passcode) {
                 errorMsg.classList.add('hidden');
                 
-                // พยายามเล่นเพลงทันทีที่กดเข้าสู่ระบบสำเร็จ
-                tryPlayMusic();
+                // *** จุดสำคัญ: สั่งเล่นเพลงตรงนี้อีกรอบ ***
+                if (bgPlayer && typeof bgPlayer.playVideo === 'function') {
+                    bgPlayer.unMute();
+                    bgPlayer.playVideo();
+                }
 
                 goToPage('page-2');
             } else {
