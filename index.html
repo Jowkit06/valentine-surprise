@@ -15,32 +15,34 @@
         const CONFIG = {
             passcode: "140269", 
             
-            // รูปหน้าปก
+            // รูปหน้าปก (ใส่ .gif ได้ครับ)
             coverImage: "https://img2.pic.in.th/LINE_ALBUM_21266_260214_28.jpg",
 
-            // อัลบั้มรูป
+            // อัลบั้มรูป (ใส่ .gif ในนี้ได้เช่นกัน)
             gallery: [
                 { img: "https://img5.pic.in.th/file/secure-sv1/LINE_ALBUM_21266_260214_6.jpg", title: "วันเกิดเค้าปีแรก", text: "เซอร์ไพรส์แบบใดให้เจ้าของวันเกิดพาไปเอาเค้ก" },
-                { img: "https://img2.pic.in.th/LINE_ALBUM_21266_260214_28.jpg", title: "ทริปไปภูผาม่านครั้งแรก", text: "ไปแบบรีบ ๆ แต่สวยมาก ๆ เลย" },
-                { img: "https://img2.pic.in.th/LINE_ALBUM_21266_260214_18.jpg", title: "นี่ก็ภูผาม่าน", text: "เป็นภาพที่เค้าเอาตั้งหน้าจอโทรศัพท์เลยนะ" },
-                { img: "https://images.unsplash.com/photo-1516961642265-531546e84af2?w=600", title: "รูปที่ 4", text: "ชอบเวลาเธอหัวเราะจัง" },
-                { img: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600", title: "รูปที่ 5", text: "ขอบคุณที่อยู่ข้างกัน" },
-                { img: "https://images.unsplash.com/photo-1520854222934-141a48782029?w=600", title: "รูปที่ 6", text: "ไม่ว่าจะเจออะไร เราจะผ่านไปด้วยกัน" },
-                { img: "https://images.unsplash.com/photo-1501901609772-df0848060b33?w=600", title: "รูปที่ 7", text: "รักเธอนะคนเก่ง" },
-                { img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600", title: "รูปที่ 8", text: "เป็นเด็กดีแบบนี้ตลอดไปนะ" },
-                { img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600", title: "รูปที่ 9", text: "สุขสันต์วันวาเลนไทน์ครับ" },
-                { img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600", title: "รูปที่ 10", text: "รักที่สุดเลย ❤️" },
+                { img: "https://img2.pic.in.th/LINE_ALBUM_21266_260214_28.jpg", title: "ทริปไปภูผาม่านครั้งแรก", text: "ไปแบบรีบ ๆ แต่สนุกมาก ๆ เลย" },
+                { img: "https://img2.pic.in.th/LINE_ALBUM_21266_260214_18.jpg", title: "นี่ก็ภูผาม่าน", text: "วันนั้นเหมือนเตรียมตัวจะไปถ่ายพรีเวดดิ้งกันอ่ะ 55555" },
+                { img: "https://img5.pic.in.th/file/secure-sv1/LINE_ALBUM__260214_2.jpg", title: "กลับมาปัจจุบันละ", text: "งานแต่งที่ใดเป็นได้แค่แขกรับเชิญ ไว้รองานของเรานะ" },
+                { img: "https://img5.pic.in.th/file/secure-sv1/1000005018.jpeg", title: "ลูกสาวและลูกชายหัวแก้วหัวแหวน", text: "พยานรักของเราสองคน55555 แล้วดูบักโซยุตอนนั้นคือตะมุตะมิมาก" },
+                { img: "https://img2.pic.in.th/eb5dfda9e7cb5e50448a7d5beee1353b.jpeg", title: "คาเฟ่ที่เท่าไหร่ไม่รู้", text: "ไม่ว่าจะอยู่ที่ไหน เราต้องไปคาเฟ่ไว้ก่อน" },
+                { img: "https://img5.pic.in.th/file/secure-sv1/IMG_1067e65ec997b3c651af.jpg", title: "ชอบเวลาได้อยู่ด้วยกันแบบนี้", text: "ไว้ไปคาเฟ่กันอีกนะ คาเฟ่ที่แปดล้าน55555" },
+                { img: "https://img2.pic.in.th/IMG_4274.jpg", title: "รูปนี้แต่งจากAI", text: "ปัจจุบันรูปนี้ขึ้นเป็นรูปหน้าจอโทรศัพท์ด้วยแหละ" },
+                { img: "https://img5.pic.in.th/file/secure-sv1/LINE_ALBUM_--_260214_2.jpg", title: "ภูกระดึงตึ่งโป๊ะ!!", text: "ไว้ไปด้วยกันอีก ปีหน้า ไปผาหล่มสักกัน ปีที่แล้วยังไม่ได้ไปเลย" },
+                { img: "https://img2.pic.in.th/LINE_ALBUM_21266_260214_24.jpg", title: "สระมรกต", text: "เค้าเตงรักที่สุดเลยนะ ❤️" },
             ],
 
             page3: {
-                // 1. วิดีโอหลัก (YouTube Video) - รองรับลิงก์ Shorts แล้วครับ
+                // วิดีโอ YouTube
                 youtubeVideoID: "https://youtube.com/shorts/GdsorhayzPQ?feature=share", 
-
-                // 2. เพลงพื้นหลัง (YouTube Music)
+                // เพลงพื้นหลัง
                 backgroundMusicID: "https://www.youtube.com/watch?v=uZX76884ARI", 
             },
 
-            giftImage: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDdtY2J6Nnl6a2F4a2F4a2F4a2F4a2F4a2F4a2F4a2F4/L0qTl8DRjr0Xv9j/giphy.gif"
+            // ⚠️ วิธีใส่ GIF:
+            // 1. ถ้ามีไฟล์ในเครื่อง: เอาไฟล์ไปวางที่เดียวกับ index.html แล้วใส่ชื่อไฟล์ เช่น "my-gift.gif"
+            // 2. ถ้าใช้ลิ้งค์: ใส่ลิ้งค์ที่ลงท้ายด้วย .gif ได้เลย
+            giftImage: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWNjazY4d2VscHJ2cGYxamlxem51OHI3cXFqcHFsbXB6bWV3Nm9mcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7nSqXAOBb9AcD4uzzu/giphy.gif"
         };
 
         tailwind.config = {
@@ -151,7 +153,7 @@
                             </div>
                             
                             <!-- YouTube Player Container -->
-                            <div class="rounded-2xl shadow-lg border-4 border-pink-200 overflow-hidden relative mx-2 md:mx-0 bg-black aspect-video">
+                            <div id="video-container" class="rounded-2xl shadow-lg border-4 border-pink-200 overflow-hidden relative mx-2 md:mx-0 bg-black aspect-video transition-all duration-500">
                                 <div id="youtube-main-player" class="w-full h-full"></div>
                             </div>
                             <p class="text-xs text-gray-400 text-center">*วิดีโอและเพลงพื้นหลังจะเล่นอัตโนมัติครับ</p>
@@ -160,9 +162,9 @@
                             <div class="bg-pink-50 p-6 md:p-8 rounded-2xl relative h-auto">
                                 <span class="text-4xl text-pink-200 absolute -top-2 -left-2">"</span>
                                 <p class="text-gray-600 leading-relaxed text-base md:text-lg text-center md:text-left">
-                                    ขอบคุณที่เข้ามาเป็นเรื่องราวดีๆ ในชีวิตเค้านะ ไม่ว่าเราจะผ่านอะไรมา เธอก็ยังน่ารักและอยู่ข้างๆ กันเสมอ <br><br>
-                                    ขอโทษถ้าเคยทำตัวไม่น่ารักบ้าง แต่สัญญาว่าจะปรับปรุงตัวและดูแลเธอให้ดีที่สุด <br><br>
-                                    รักเธอมากๆ นะครับ ❤️
+                                    ขอบคุณที่เข้ามาเป็นเรื่องราวดีๆ ในชีวิตเค้านะ ไม่ว่าเราจะผ่านอะไรมา เตงก็ยังน่ารักและอยู่ข้างๆ กันเสมอ <br><br>
+                                    ขอโทษถ้าเคยทำตัวไม่น่ารักบ้าง แต่หลังจากนี้จะปรับปรุงตัวและดูแลเตงให้ดีที่สุด <br><br>
+                                    รักพี่แคทมากๆ นะครับ ❤️
                                 </p>
                                 <span class="text-4xl text-pink-200 absolute -bottom-6 -right-2">"</span>
                             </div>
@@ -184,11 +186,12 @@
                 <div class="space-y-2 text-gray-600 text-sm md:text-lg">
                     <p>ขอให้เรามีความสุขมากๆ แบบนี้ตลอดไป</p>
                     <p>ขอให้เธอประสบความสำเร็จในทุกเรื่อง</p>
+                    <p>ได้กินอาหารที่อร่อยๆ พบเจอแต่คนดีๆ เข้ามาในชีวิต</p>
                     <p>ยิ้มเยอะๆ นะ รอยยิ้มเธอสวยที่สุดแล้ว</p>
                 </div>
                 <div class="pt-6">
-                    <h2 class="text-lg md:text-2xl font-bold text-pink-500 mb-2">รักนะครับ ❤️</h2>
-                    <p class="text-xs md:text-base text-gray-400">จาก... แฟนของเธอ</p>
+                    <h2 class="text-lg md:text-2xl font-bold text-pink-500 mb-2">รักเตงนะครับ ❤️</h2>
+                    <p class="text-xs md:text-base text-gray-400">จาก... เต้ยลิงของพี่แคท</p>
                 </div>
                 <button onclick="location.reload()" class="text-sm text-pink-300 underline mt-8 hover:text-pink-500">กลับไปหน้าแรก</button>
             </div>
@@ -239,6 +242,15 @@
             document.getElementById('img-cover').src = CONFIG.coverImage;
             document.getElementById('img-gift').src = CONFIG.giftImage;
             
+            // ตรวจสอบว่าเป็น Shorts หรือไม่ เพื่อปรับสัดส่วนวิดีโอ
+            if (CONFIG.page3.youtubeVideoID.includes("shorts")) {
+                const container = document.getElementById('video-container');
+                container.classList.remove('aspect-video');
+                container.classList.add('aspect-[9/16]');
+                container.classList.add('max-h-[60vh]'); // จำกัดความสูงไม่ให้ล้นจอ
+                container.classList.add('mx-auto');      // จัดกึ่งกลาง
+            }
+
             const galleryContainer = document.getElementById('gallery-container');
             CONFIG.gallery.forEach((item) => {
                 const html = `
