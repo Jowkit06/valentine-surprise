@@ -39,9 +39,7 @@
                 backgroundMusicID: "https://www.youtube.com/watch?v=uZX76884ARI", 
             },
 
-            // ⚠️ วิธีใส่ GIF:
-            // 1. ถ้ามีไฟล์ในเครื่อง: เอาไฟล์ไปวางที่เดียวกับ index.html แล้วใส่ชื่อไฟล์ เช่น "my-gift.gif"
-            // 2. ถ้าใช้ลิ้งค์: ใส่ลิ้งค์ที่ลงท้ายด้วย .gif ได้เลย
+            // GIF หน้าสุดท้าย
             giftImage: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWNjazY4d2VscHJ2cGYxamlxem51OHI3cXFqcHFsbXB6bWV3Nm9mcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7nSqXAOBb9AcD4uzzu/giphy.gif"
         };
 
@@ -202,6 +200,7 @@
     <script>
         var mainPlayer;
         var bgPlayer;
+        var musicStarted = false;
 
         // ฟังก์ชันช่วยดึง ID จากลิงก์ Youtube (รองรับ Shorts แล้ว)
         function getYoutubeId(url) {
@@ -219,7 +218,7 @@
                 videoId: mainVideoId,
                 playerVars: { 
                     'playsinline': 1,
-                    'origin': window.location.origin // เพิ่ม Origin เพื่อความปลอดภัยและลดบั๊ก
+                    'origin': window.location.origin 
                 }
             });
 
@@ -238,6 +237,15 @@
             });
         }
 
+        // ฟังก์ชันพยายามเล่นเพลง
+        function tryPlayMusic() {
+            if (!musicStarted && bgPlayer && typeof bgPlayer.playVideo === 'function') {
+                bgPlayer.setVolume(100);
+                bgPlayer.playVideo();
+                musicStarted = true;
+            }
+        }
+
         window.onload = function() {
             document.getElementById('img-cover').src = CONFIG.coverImage;
             document.getElementById('img-gift').src = CONFIG.giftImage;
@@ -247,8 +255,8 @@
                 const container = document.getElementById('video-container');
                 container.classList.remove('aspect-video');
                 container.classList.add('aspect-[9/16]');
-                container.classList.add('max-h-[60vh]'); // จำกัดความสูงไม่ให้ล้นจอ
-                container.classList.add('mx-auto');      // จัดกึ่งกลาง
+                container.classList.add('max-h-[60vh]'); 
+                container.classList.add('mx-auto');      
             }
 
             const galleryContainer = document.getElementById('gallery-container');
@@ -271,6 +279,10 @@
             const errorMsg = document.getElementById('error-msg');
             if (input.value === CONFIG.passcode) {
                 errorMsg.classList.add('hidden');
+                
+                // เริ่มเล่นเพลงที่นี่ (ตอนกดเข้าหน้า 2)
+                tryPlayMusic();
+
                 goToPage('page-2');
             } else {
                 errorMsg.classList.remove('hidden');
@@ -291,25 +303,17 @@
             target.style.display = 'flex';
             setTimeout(() => { target.classList.add('section-active'); }, 50);
 
-            // Logic ควบคุม Youtube Video & Background Music
+            // Logic ควบคุม Youtube Video
             if (pageId === 'page-3') {
                 // เล่นวิดีโอหลัก
                 if (mainPlayer && typeof mainPlayer.playVideo === 'function') {
                     mainPlayer.playVideo();
                 }
-                // เล่นเพลงพื้นหลัง
-                if (bgPlayer && typeof bgPlayer.playVideo === 'function') {
-                    bgPlayer.setVolume(50); // ตั้งเสียงเพลงพื้นหลังไว้ที่ 50% จะได้ไม่กลบเสียงวิดีโอหลัก
-                    bgPlayer.playVideo();
-                }
+                // ไม่ต้องลดเสียงเพลงพื้นหลัง (ปล่อยให้เล่นต่อเนื่องตามเสียงปกติ)
             } else {
-                // หยุดวิดีโอหลัก
+                // หยุดวิดีโอหลัก (ถ้าเล่นอยู่)
                 if (mainPlayer && typeof mainPlayer.pauseVideo === 'function') {
                     mainPlayer.pauseVideo();
-                }
-                // หยุดเพลงพื้นหลัง
-                if (bgPlayer && typeof bgPlayer.pauseVideo === 'function') {
-                    bgPlayer.pauseVideo();
                 }
             }
         }
