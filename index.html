@@ -20,9 +20,9 @@
 
             // อัลบั้มรูป
             gallery: [
-                { img: "https://images.unsplash.com/photo-1522673607200-1645062cd958?w=600", title: "รูปที่ 1", text: "จำวันแรกของเราได้ไหม" },
-                { img: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=600", title: "รูปที่ 2", text: "ทริปนี้สนุกมากๆ เลยนะ" },
-                { img: "https://images.unsplash.com/photo-1511253259073-405cb7380489?w=600", title: "รูปที่ 3", text: "รอยยิ้มของเธอสดใสที่สุด" },
+                { img: "https://img5.pic.in.th/file/secure-sv1/LINE_ALBUM_21266_260214_6.jpg", title: "วันเกิดเค้าปีแรก", text: "เซอร์ไพรส์แบบใดให้เจ้าของวันเกิดพาไปเอาเค้ก" },
+                { img: "https://img2.pic.in.th/LINE_ALBUM_21266_260214_28.jpg", title: "ทริปไปภูผาม่านครั้งแรก", text: "ไปแบบรีบ ๆ แต่สวยมาก ๆ เลย" },
+                { img: "https://img2.pic.in.th/LINE_ALBUM_21266_260214_18.jpg", title: "นี่ก็ภูผาม่าน", text: "เป็นภาพที่เค้าเอาตั้งหน้าจอโทรศัพท์เลยนะ" },
                 { img: "https://images.unsplash.com/photo-1516961642265-531546e84af2?w=600", title: "รูปที่ 4", text: "ชอบเวลาเธอหัวเราะจัง" },
                 { img: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600", title: "รูปที่ 5", text: "ขอบคุณที่อยู่ข้างกัน" },
                 { img: "https://images.unsplash.com/photo-1520854222934-141a48782029?w=600", title: "รูปที่ 6", text: "ไม่ว่าจะเจออะไร เราจะผ่านไปด้วยกัน" },
@@ -33,9 +33,11 @@
             ],
 
             page3: {
-                videoFilename: "https://drive.google.com/file/d/16LwTvDJ21fy2wwrRpkWhTK39Xrh5aPZ0/view?usp=sharing", 
-                // ใส่ลิงก์เต็มได้เลย ระบบจะตัดเอา ID เองครับ
-                backgroundMusicID: "https://youtu.be/uZX76884ARI?si=rkuJ9jjb8ULMVmvs&t=51", 
+                // 1. วิดีโอหลัก (YouTube Video) - รองรับลิงก์ Shorts แล้วครับ
+                youtubeVideoID: "https://youtube.com/shorts/GdsorhayzPQ?feature=share", 
+
+                // 2. เพลงพื้นหลัง (YouTube Music)
+                backgroundMusicID: "https://www.youtube.com/watch?v=uZX76884ARI", 
             },
 
             giftImage: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDdtY2J6Nnl6a2F4a2F4a2F4a2F4a2F4a2F4a2F4a2F4/L0qTl8DRjr0Xv9j/giphy.gif"
@@ -85,6 +87,8 @@
 <body class="min-h-screen flex items-center justify-center relative font-sans text-gray-700">
 
     <div id="hearts-container" class="fixed inset-0 pointer-events-none z-0"></div>
+    
+    <!-- Hidden Player for Background Music -->
     <div id="youtube-bg-player" class="hidden w-0 h-0 overflow-hidden absolute pointer-events-none"></div>
 
     <div class="bg-white/90 backdrop-blur-sm w-full max-w-md md:max-w-4xl h-[90vh] md:h-[80vh] md:min-h-[600px] m-4 rounded-3xl shadow-2xl overflow-hidden relative z-10 border-4 border-pink-100 flex flex-col transition-all duration-500">
@@ -145,13 +149,12 @@
                                     <h2 class="text-xl md:text-2xl font-bold text-pink-500">VDO ของเรา</h2>
                                 </div>
                             </div>
-                            <div class="rounded-2xl shadow-lg border-4 border-pink-200 overflow-hidden relative mx-2 md:mx-0 bg-black">
-                                <video id="main-video" class="w-full h-auto max-h-[400px] object-contain" controls playsinline>
-                                    <source id="video-source" src="" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
+                            
+                            <!-- YouTube Player Container -->
+                            <div class="rounded-2xl shadow-lg border-4 border-pink-200 overflow-hidden relative mx-2 md:mx-0 bg-black aspect-video">
+                                <div id="youtube-main-player" class="w-full h-full"></div>
                             </div>
-                            <p class="text-xs text-gray-400 text-center">*เพลงจะเล่นอัตโนมัติพร้อมวิดีโอครับ</p>
+                            <p class="text-xs text-gray-400 text-center">*วิดีโอและเพลงพื้นหลังจะเล่นอัตโนมัติครับ</p>
                         </div>
                         <div class="w-full md:w-1/2 flex flex-col justify-center">
                             <div class="bg-pink-50 p-6 md:p-8 rounded-2xl relative h-auto">
@@ -194,23 +197,41 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        var player;
+        var mainPlayer;
+        var bgPlayer;
 
-        // ฟังก์ชันช่วยดึง ID จากลิงก์ Youtube (ป้องกัน Error)
+        // ฟังก์ชันช่วยดึง ID จากลิงก์ Youtube (รองรับ Shorts แล้ว)
         function getYoutubeId(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            // Regex ใหม่ รองรับทั้ง /shorts/, /watch?v=, /embed/, youtu.be
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
             const match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : url;
         }
 
         function onYouTubeIframeAPIReady() {
-            // แปลงลิงก์เป็น ID ก่อนใช้งาน
-            const videoId = getYoutubeId(CONFIG.page3.backgroundMusicID);
-            
-            player = new YT.Player('youtube-bg-player', {
+            // 1. สร้าง Player สำหรับวิดีโอหลัก
+            const mainVideoId = getYoutubeId(CONFIG.page3.youtubeVideoID);
+            mainPlayer = new YT.Player('youtube-main-player', {
+                height: '100%', width: '100%',
+                videoId: mainVideoId,
+                playerVars: { 
+                    'playsinline': 1,
+                    'origin': window.location.origin // เพิ่ม Origin เพื่อความปลอดภัยและลดบั๊ก
+                }
+            });
+
+            // 2. สร้าง Player สำหรับเพลงพื้นหลัง (ซ่อนอยู่)
+            const bgMusicId = getYoutubeId(CONFIG.page3.backgroundMusicID);
+            bgPlayer = new YT.Player('youtube-bg-player', {
                 height: '0', width: '0',
-                videoId: videoId,
-                playerVars: { 'playsinline': 1, 'controls': 0, 'loop': 1 }
+                videoId: bgMusicId,
+                playerVars: { 
+                    'playsinline': 1, 
+                    'controls': 0, 
+                    'loop': 1,
+                    'playlist': bgMusicId,
+                    'origin': window.location.origin
+                }
             });
         }
 
@@ -218,11 +239,6 @@
             document.getElementById('img-cover').src = CONFIG.coverImage;
             document.getElementById('img-gift').src = CONFIG.giftImage;
             
-            const video = document.getElementById('main-video');
-            const source = document.getElementById('video-source');
-            source.src = CONFIG.page3.videoFilename;
-            video.load(); 
-
             const galleryContainer = document.getElementById('gallery-container');
             CONFIG.gallery.forEach((item) => {
                 const html = `
@@ -263,15 +279,26 @@
             target.style.display = 'flex';
             setTimeout(() => { target.classList.add('section-active'); }, 50);
 
-            const video = document.getElementById('main-video');
+            // Logic ควบคุม Youtube Video & Background Music
             if (pageId === 'page-3') {
-                video.currentTime = 0;
-                var playPromise = video.play();
-                if (playPromise !== undefined) { playPromise.catch(error => { console.log("Video Autoplay blocked"); }); }
-                if (player && typeof player.playVideo === 'function') { player.seekTo(0); player.playVideo(); }
+                // เล่นวิดีโอหลัก
+                if (mainPlayer && typeof mainPlayer.playVideo === 'function') {
+                    mainPlayer.playVideo();
+                }
+                // เล่นเพลงพื้นหลัง
+                if (bgPlayer && typeof bgPlayer.playVideo === 'function') {
+                    bgPlayer.setVolume(50); // ตั้งเสียงเพลงพื้นหลังไว้ที่ 50% จะได้ไม่กลบเสียงวิดีโอหลัก
+                    bgPlayer.playVideo();
+                }
             } else {
-                if(video) video.pause();
-                if (player && typeof player.pauseVideo === 'function') { player.pauseVideo(); }
+                // หยุดวิดีโอหลัก
+                if (mainPlayer && typeof mainPlayer.pauseVideo === 'function') {
+                    mainPlayer.pauseVideo();
+                }
+                // หยุดเพลงพื้นหลัง
+                if (bgPlayer && typeof bgPlayer.pauseVideo === 'function') {
+                    bgPlayer.pauseVideo();
+                }
             }
         }
 
