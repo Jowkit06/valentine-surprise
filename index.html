@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Valentine's Day ❤️</title>
+    <!-- ฟอนต์ Kanit -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // ==========================================
+        // 🔧 ส่วนตั้งค่า (แก้ไขตรงนี้ได้เลยครับ)
+        // ==========================================
+        const CONFIG = {
+            // 1. รหัสผ่าน
+            passcode: "140269", 
+            
+            // 2. รูปหน้าปก (หน้า Login)
+            coverImage: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+
+            // 3. รูปในอัลบั้ม (เพิ่มลดได้ตามใจ)
+            gallery: [
+                { img: "https://images.unsplash.com/photo-1522673607200-1645062cd958?w=600", title: "รูปที่ 1", text: "จำวันแรกของเราได้ไหม" },
+                { img: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=600", title: "รูปที่ 2", text: "ทริปนี้สนุกมากๆ เลยนะ" },
+                { img: "https://images.unsplash.com/photo-1511253259073-405cb7380489?w=600", title: "รูปที่ 3", text: "รอยยิ้มของเธอสดใสที่สุด" },
+                { img: "https://images.unsplash.com/photo-1516961642265-531546e84af2?w=600", title: "รูปที่ 4", text: "ชอบเวลาเธอหัวเราะจัง" },
+                { img: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600", title: "รูปที่ 5", text: "ขอบคุณที่อยู่ข้างกัน" },
+                { img: "https://images.unsplash.com/photo-1520854222934-141a48782029?w=600", title: "รูปที่ 6", text: "ไม่ว่าจะเจออะไร เราจะผ่านไปด้วยกัน" },
+                { img: "https://images.unsplash.com/photo-1501901609772-df0848060b33?w=600", title: "รูปที่ 7", text: "รักเธอนะคนเก่ง" },
+                { img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600", title: "รูปที่ 8", text: "เป็นเด็กดีแบบนี้ตลอดไปนะ" },
+                { img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600", title: "รูปที่ 9", text: "สุขสันต์วันวาเลนไทน์ครับ" },
+                { img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600", title: "รูปที่ 10", text: "รักที่สุดเลย ❤️" },
+            ],
+
+            // 4. หน้าความรู้สึก (รูป + ID เพลง YouTube)
+            page3: {
+                image: "https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=600", 
+                youtubeID: "N9I-Y5X5c9E", // ใส่ ID หลัง v= ของลิงก์ YouTube
+            },
+
+            // 5. รูปของขวัญหน้าสุดท้าย
+            giftImage: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDdtY2J6Nnl6a2F4a2F4a2F4a2F4a2F4a2F4a2F4a2F4/L0qTl8DRjr0Xv9j/giphy.gif"
+        };
+
+        // ตั้งค่า Tailwind Theme
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pink: { 50: '#fff0f3', 100: '#ffc2d1', 200: '#ff8fa3', 300: '#ff5c86', 500: '#ff0a54' }
+                    },
+                    fontFamily: { sans: ['Kanit', 'sans-serif'] },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* CSS เพิ่มเติม */
+        body { 
+            background: linear-gradient(135deg, #fff0f3 0%, #ffe5ec 100%); 
+            overflow: hidden; 
+            touch-action: none; 
+        }
+        .section-transition { transition: all 0.5s ease-in-out; opacity: 0; transform: translateY(20px); display: none; }
+        .section-active { opacity: 1; transform: translateY(0); display: flex; }
+        
+        /* Hearts Animation */
+        .heart { position: absolute; color: #ff5c86; opacity: 0.6; animation: floatUp 10s linear infinite; }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+        
+        /* Custom Scrollbar */
+        .custom-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #ffc2d1; border-radius: 10px; }
+        
+        /* Equalizer Animation (Bar กราฟิกเสียงเพลง) */
+        .bar { width: 4px; background: #ff5c86; animation: equalize 1s infinite; }
+        .bar:nth-child(1) { animation-delay: 0.1s; height: 10px; }
+        .bar:nth-child(2) { animation-delay: 0.3s; height: 15px; }
+        .bar:nth-child(3) { animation-delay: 0.5s; height: 20px; }
+        .bar:nth-child(4) { animation-delay: 0.2s; height: 12px; }
+        @keyframes equalize { 0% { height: 10px; } 50% { height: 25px; } 100% { height: 10px; } }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center relative font-sans text-gray-700">
+
+    <!-- Background Hearts -->
+    <div id="hearts-container" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- Main Card Container: Responsive Size -->
+    <div class="bg-white/90 backdrop-blur-sm w-full max-w-md md:max-w-4xl h-[90vh] md:h-[80vh] md:min-h-[600px] m-4 rounded-3xl shadow-2xl overflow-hidden relative z-10 border-4 border-pink-100 flex flex-col transition-all duration-500">
+        
+        <!-- Header -->
+        <div class="p-4 flex justify-between items-center border-b border-pink-100 shrink-0">
+            <div class="flex items-center gap-2">
+                <span class="animate-pulse text-pink-500">❤️</span>
+                <span class="text-sm text-pink-400 font-light">Happy Valentine's Day</span>
+            </div>
+            <div class="text-xs text-gray-400">14.02.69</div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-1 p-6 relative flex flex-col w-full overflow-hidden">
+
+            <!-- PAGE 1: Login -->
+            <div id="page-1" class="section-transition section-active flex-col md:flex-row items-center justify-center w-full h-full gap-8 md:gap-16">
+                <!-- Image -->
+                <div class="relative w-32 h-32 md:w-64 md:h-64 rounded-full border-4 border-pink-300 p-1 shadow-lg animate-float shrink-0">
+                    <img id="img-cover" src="" alt="Cover Photo" class="w-full h-full object-cover rounded-full">
+                    <div class="absolute bottom-0 right-0 bg-pink-500 text-white p-2 md:p-3 rounded-full shadow-md text-sm md:text-xl">🔒</div>
+                </div>
+                <!-- Form -->
+                <div class="text-center md:text-left w-full max-w-xs">
+                    <h1 class="text-xl md:text-3xl font-bold text-pink-500 mb-2 md:mb-4">Welcome My Love</h1>
+                    <p class="text-gray-500 text-sm md:text-base mb-4">โปรดใส่รหัสผ่านเพื่อเข้าสู่หัวใจ</p>
+                    <div class="w-full space-y-3">
+                        <input type="tel" id="password-input" maxlength="6" placeholder="รหัสผ่าน" 
+                               class="w-full px-4 py-3 rounded-xl border-2 border-pink-100 focus:border-pink-400 focus:outline-none text-center text-lg tracking-widest text-pink-500 placeholder-pink-200 transition-colors">
+                        <p id="error-msg" class="text-red-400 text-xs text-center hidden">รหัสผิดครับ ลองใหม่อีกทีนะ</p>
+                        <button onclick="checkPassword()" class="w-full bg-gradient-to-r from-pink-300 to-pink-500 text-white py-3 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all font-semibold">
+                            ปลดล็อกหัวใจ ❤️
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 2: Gallery -->
+            <div id="page-2" class="section-transition flex-col w-full h-full absolute inset-0 p-4 md:p-8 bg-white">
+                <div class="flex justify-between items-center mb-4 sticky top-0 bg-white/95 backdrop-blur z-10 py-2 shrink-0">
+                     <h2 class="text-xl md:text-2xl font-bold text-pink-500">Our Journey 📸</h2>
+                </div>
+                
+                <!-- Gallery Grid -->
+                <div id="gallery-container" class="custom-scroll overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 pb-20 pr-1 content-start">
+                    <!-- Images inserted via JS -->
+                </div>
+
+                <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-white via-white to-transparent pointer-events-none flex justify-center">
+                    <button onclick="goToPage('page-3')" class="w-full md:w-1/2 bg-pink-100 text-pink-500 py-3 rounded-xl hover:bg-pink-200 transition-colors font-semibold shadow-sm pointer-events-auto">
+                        อ่านความรู้สึกต่อ ➜
+                    </button>
+                </div>
+            </div>
+
+            <!-- PAGE 3: Feelings & Music -->
+            <div id="page-3" class="section-transition flex-col w-full h-full absolute inset-0 p-4 md:p-8 bg-white overflow-hidden">
+                <div class="custom-scroll overflow-y-auto w-full h-full pb-20 px-1">
+                    <div class="flex flex-col md:flex-row gap-6 md:gap-10 h-full">
+                        
+                        <!-- Left: Image & Music -->
+                        <div class="w-full md:w-1/2 flex flex-col gap-4">
+                            <div class="text-center md:text-left">
+                                <div class="inline-flex items-center gap-2">
+                                    <div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-xl animate-pulse-slow">💌</div>
+                                    <h2 class="text-xl md:text-2xl font-bold text-pink-500">ความในใจของเค้า</h2>
+                                </div>
+                            </div>
+                            
+                            <div class="rounded-2xl p-2 bg-white shadow-md border border-pink-100 rotate-1 mx-2 md:mx-0">
+                                <img id="img-feeling" src="" class="w-full h-48 md:h-64 object-cover rounded-xl">
+                            </div>
+
+                            <!-- Music Player Control -->
+                            <div class="w-full bg-white rounded-2xl shadow-lg border border-pink-200 p-4">
+                                <div id="youtube-player-container" class="hidden w-0 h-0 overflow-hidden"></div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-pink-500 text-xl">🎵</div>
+                                        <div>
+                                            <div class="text-sm font-bold text-gray-700">เพลงของเรา</div>
+                                            <div class="flex items-end gap-1 h-3 mt-1 opacity-0 transition-opacity duration-300" id="equalizer">
+                                                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button id="music-btn" onclick="toggleMusic()" class="bg-pink-500 text-white px-3 py-2 rounded-full text-xs font-semibold shadow-md hover:bg-pink-600 transition-colors flex items-center gap-1">
+                                        <span>▶️</span> เล่นเพลง
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Text Message -->
+                        <div class="w-full md:w-1/2 flex flex-col justify-center">
+                            <div class="bg-pink-50 p-6 md:p-8 rounded-2xl relative h-auto">
+                                <span class="text-4xl text-pink-200 absolute -top-2 -left-2">"</span>
+                                <p class="text-gray-600 leading-relaxed text-base md:text-lg text-center md:text-left">
+                                    ขอบคุณที่เข้ามาเป็นเรื่องราวดีๆ ในชีวิตเค้านะ ไม่ว่าเราจะผ่านอะไรมา เธอก็ยังน่ารักและอยู่ข้างๆ กันเสมอ <br><br>
+                                    ขอโทษถ้าเคยทำตัวไม่น่ารักบ้าง แต่สัญญาว่าจะปรับปรุงตัวและดูแลเธอให้ดีที่สุด <br><br>
+                                    รักเธอมากๆ นะครับ ❤️
+                                </p>
+                                <span class="text-4xl text-pink-200 absolute -bottom-6 -right-2">"</span>
+                            </div>
+                            
+                            <div class="mt-8 md:mt-12 text-center">
+                                <button onclick="goToPage('page-4')" class="w-full md:w-auto px-8 bg-pink-500 text-white py-3 rounded-full shadow-lg hover:bg-pink-600 transition-all transform hover:scale-105">
+                                    ไปดูคำอวยพรนะ ➜
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 4: Wishes -->
+            <div id="page-4" class="section-transition flex-col items-center justify-center text-center w-full h-full space-y-6 p-6">
+                <img id="img-gift" src="" class="w-32 h-32 md:w-56 md:h-56 object-cover rounded-2xl mb-4 border-4 border-pink-200 shadow-xl rotate-3" alt="Gift">
+                <h1 class="text-2xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">Happy Valentine's Day!</h1>
+                <div class="space-y-2 text-gray-600 text-sm md:text-lg">
+                    <p>ขอให้เรามีความสุขมากๆ แบบนี้ตลอดไป</p>
+                    <p>ขอให้เธอประสบความสำเร็จในทุกเรื่อง</p>
+                    <p>ยิ้มเยอะๆ นะ รอยยิ้มเธอสวยที่สุดแล้ว</p>
+                </div>
+                <div class="pt-6">
+                    <h2 class="text-lg md:text-2xl font-bold text-pink-500 mb-2">รักนะครับ ❤️</h2>
+                    <p class="text-xs md:text-base text-gray-400">จาก... แฟนของเธอ</p>
+                </div>
+                <button onclick="location.reload()" class="text-sm text-pink-300 underline mt-8 hover:text-pink-500">กลับไปหน้าแรก</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        // --- YouTube Logic ---
+        var player;
+        var isPlaying = false;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player-container', {
+                height: '0',
+                width: '0',
+                videoId: CONFIG.page3.youtubeID,
+                playerVars: { 'playsinline': 1, 'controls': 0 },
+                events: { 'onStateChange': onPlayerStateChange }
+            });
+        }
+
+        function toggleMusic() {
+            if (!player || typeof player.playVideo !== 'function') return;
+            if (isPlaying) { player.pauseVideo(); } else { player.playVideo(); }
+        }
+
+        function onPlayerStateChange(event) {
+            const btn = document.getElementById('music-btn');
+            const eq = document.getElementById('equalizer');
+            if (event.data == YT.PlayerState.PLAYING) {
+                isPlaying = true;
+                btn.innerHTML = '<span>⏸️</span> หยุด';
+                btn.classList.replace('bg-pink-500', 'bg-pink-400');
+                eq.classList.remove('opacity-0');
+            } else {
+                isPlaying = false;
+                btn.innerHTML = '<span>▶️</span> เล่นเพลง';
+                btn.classList.replace('bg-pink-400', 'bg-pink-500');
+                eq.classList.add('opacity-0');
+            }
+        }
+
+        // --- Main Logic ---
+        window.onload = function() {
+            // โหลดรูปจาก Config
+            document.getElementById('img-cover').src = CONFIG.coverImage;
+            document.getElementById('img-gift').src = CONFIG.giftImage;
+            document.getElementById('img-feeling').src = CONFIG.page3.image;
+
+            // สร้าง Gallery
+            const galleryContainer = document.getElementById('gallery-container');
+            CONFIG.gallery.forEach((item) => {
+                const html = `
+                    <div class="bg-pink-50 p-3 rounded-2xl transform hover:scale-[1.02] transition-transform duration-300 flex flex-col gap-3 h-full">
+                        <img src="${item.img}" class="w-full h-40 md:h-48 object-cover rounded-xl shadow-sm shrink-0">
+                        <div class="text-sm text-gray-600 flex-1 flex flex-col justify-center text-center">
+                            <span class="block font-bold text-pink-400 mb-1 text-base">${item.title}</span>
+                            ${item.text}
+                        </div>
+                    </div>
+                `;
+                galleryContainer.innerHTML += html;
+            });
+        };
+
+        function checkPassword() {
+            const input = document.getElementById('password-input');
+            const errorMsg = document.getElementById('error-msg');
+            
+            if (input.value === CONFIG.passcode) {
+                errorMsg.classList.add('hidden');
+                goToPage('page-2');
+            } else {
+                errorMsg.classList.remove('hidden');
+                input.classList.add('border-red-400', 'animate-pulse');
+                setTimeout(() => { input.classList.remove('animate-pulse', 'border-red-400'); }, 1000);
+            }
+        }
+
+        document.getElementById('password-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        function goToPage(pageId) {
+            document.querySelectorAll('.section-transition').forEach(el => {
+                el.classList.remove('section-active');
+                setTimeout(() => { if(!el.classList.contains('section-active')) el.style.display = 'none'; }, 500);
+            });
+            const target = document.getElementById(pageId);
+            target.style.display = 'flex';
+            setTimeout(() => { target.classList.add('section-active'); }, 50);
+        }
+
+        // Background Hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = Math.random() * 5 + 5 + "s";
+            heart.style.fontSize = Math.random() * 20 + 10 + "px";
+            document.getElementById('hearts-container').appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 10000);
+        }
+        setInterval(createHeart, 300);
+    </script>
+</body>
+</html>
