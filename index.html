@@ -53,6 +53,7 @@
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 4s linear infinite',
                     },
                     keyframes: {
                         float: {
@@ -88,8 +89,13 @@
 
     <div id="hearts-container" class="fixed inset-0 pointer-events-none z-0"></div>
     
-    <!-- Hidden Player for Background Music -->
-    <div id="youtube-bg-player" class="hidden w-0 h-0 overflow-hidden absolute pointer-events-none"></div>
+    <!-- Hidden Player for Background Music (แก้ไข: เปลี่ยนจาก hidden เป็น opacity-0 เพื่อให้มือถือมองเห็น) -->
+    <div id="youtube-bg-player" class="fixed bottom-0 left-0 w-1 h-1 opacity-0 pointer-events-none z-[-1]"></div>
+
+    <!-- Music Control Toggle (ปุ่มควบคุมเพลง) -->
+    <button id="music-toggle" onclick="toggleMusicManually()" class="fixed bottom-4 right-4 z-50 bg-white/80 backdrop-blur p-3 rounded-full shadow-lg border-2 border-pink-200 hidden transition-transform active:scale-95">
+        <span id="music-icon" class="text-xl">🔇</span>
+    </button>
 
     <div class="bg-white/90 backdrop-blur-sm w-full max-w-md md:max-w-4xl h-[90vh] md:h-[80vh] md:min-h-[600px] m-4 rounded-3xl shadow-2xl overflow-hidden relative z-10 border-4 border-pink-100 flex flex-col transition-all duration-500">
         
@@ -105,7 +111,6 @@
 
             <!-- PAGE 1: Login -->
             <div id="page-1" class="section-transition section-active flex-col md:flex-row items-center justify-center w-full h-full gap-8 md:gap-16">
-                <!-- ปรับขนาด Cover ให้พอดี (ไม่ Crop) -->
                 <div class="relative w-48 md:w-80 h-auto rounded-2xl border-4 border-pink-300 p-1 shadow-lg animate-float shrink-0 bg-white">
                     <img id="img-cover" src="" loading="lazy" onerror="this.src='https://via.placeholder.com/300?text=Image+Error'" alt="Cover Photo" class="w-full h-auto object-contain rounded-xl">
                     <div class="absolute -bottom-2 -right-2 bg-pink-500 text-white p-2 md:p-3 rounded-full shadow-md text-sm md:text-xl">🔒</div>
@@ -202,9 +207,8 @@
         var bgPlayer;
         var musicStarted = false;
 
-        // ฟังก์ชันช่วยดึง ID จากลิงก์ Youtube (รองรับ Shorts แล้ว)
+        // ฟังก์ชันช่วยดึง ID จากลิงก์ Youtube
         function getYoutubeId(url) {
-            // Regex ใหม่ รองรับทั้ง /shorts/, /watch?v=, /embed/, youtu.be
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
             const match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : url;
@@ -222,10 +226,10 @@
                 }
             });
 
-            // 2. สร้าง Player สำหรับเพลงพื้นหลัง (ซ่อนอยู่)
+            // 2. สร้าง Player สำหรับเพลงพื้นหลัง
             const bgMusicId = getYoutubeId(CONFIG.page3.backgroundMusicID);
             bgPlayer = new YT.Player('youtube-bg-player', {
-                height: '0', width: '0',
+                height: '1', width: '1', // ต้องมีขนาดเล็กน้อย (ห้าม 0) เพื่อให้มือถือยอมเล่น
                 videoId: bgMusicId,
                 playerVars: { 
                     'playsinline': 1, 
@@ -233,16 +237,48 @@
                     'loop': 1,
                     'playlist': bgMusicId,
                     'origin': window.location.origin
+                },
+                events: {
+                    'onReady': onBgPlayerReady,
+                    'onStateChange': onBgPlayerStateChange
                 }
             });
         }
 
+        function onBgPlayerReady(event) {
+            // แสดงปุ่มควบคุมเพลงเมื่อพร้อม
+            document.getElementById('music-toggle').classList.remove('hidden');
+        }
+
+        function onBgPlayerStateChange(event) {
+            const icon = document.getElementById('music-icon');
+            if (event.data == YT.PlayerState.PLAYING) {
+                musicStarted = true;
+                icon.innerText = "🎵";
+                icon.classList.add("animate-spin-slow");
+            } else {
+                icon.innerText = "🔇";
+                icon.classList.remove("animate-spin-slow");
+            }
+        }
+
         // ฟังก์ชันพยายามเล่นเพลง
         function tryPlayMusic() {
-            if (!musicStarted && bgPlayer && typeof bgPlayer.playVideo === 'function') {
+            if (bgPlayer && typeof bgPlayer.playVideo === 'function') {
                 bgPlayer.setVolume(100);
                 bgPlayer.playVideo();
-                musicStarted = true;
+            }
+        }
+
+        // ฟังก์ชันปุ่มกดมือ
+        function toggleMusicManually() {
+            if (!bgPlayer) return;
+            
+            // เช็คสถานะ: 1 = Playing, 2 = Paused
+            if (bgPlayer.getPlayerState() === 1) {
+                bgPlayer.pauseVideo();
+            } else {
+                bgPlayer.playVideo();
             }
         }
 
@@ -250,7 +286,6 @@
             document.getElementById('img-cover').src = CONFIG.coverImage;
             document.getElementById('img-gift').src = CONFIG.giftImage;
             
-            // ตรวจสอบว่าเป็น Shorts หรือไม่ เพื่อปรับสัดส่วนวิดีโอ
             if (CONFIG.page3.youtubeVideoID.includes("shorts")) {
                 const container = document.getElementById('video-container');
                 container.classList.remove('aspect-video');
@@ -280,7 +315,7 @@
             if (input.value === CONFIG.passcode) {
                 errorMsg.classList.add('hidden');
                 
-                // เริ่มเล่นเพลงที่นี่ (ตอนกดเข้าหน้า 2)
+                // พยายามเล่นเพลงทันทีที่กดเข้าสู่ระบบสำเร็จ
                 tryPlayMusic();
 
                 goToPage('page-2');
@@ -305,13 +340,10 @@
 
             // Logic ควบคุม Youtube Video
             if (pageId === 'page-3') {
-                // เล่นวิดีโอหลัก
                 if (mainPlayer && typeof mainPlayer.playVideo === 'function') {
                     mainPlayer.playVideo();
                 }
-                // ไม่ต้องลดเสียงเพลงพื้นหลัง (ปล่อยให้เล่นต่อเนื่องตามเสียงปกติ)
             } else {
-                // หยุดวิดีโอหลัก (ถ้าเล่นอยู่)
                 if (mainPlayer && typeof mainPlayer.pauseVideo === 'function') {
                     mainPlayer.pauseVideo();
                 }
